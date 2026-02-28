@@ -6,14 +6,22 @@ import BookCard from "../components/BookCard.vue";
 
 const store = useLibraryStore();
 const searchQuery = ref("");
+const currentCategory = ref("Fantasía");
 
 const handleSearch = () => {
+  currentCategory.value = "";
   store.searchBooks(searchQuery.value);
+};
+
+const changeCategory = (cat) => {
+  currentCategory.value = cat;
+  searchQuery.value = "";
+  store.searchBooks(cat);
 };
 
 onMounted(() => {
   if (store.searchResults.length === 0) {
-    store.searchBooks("Fantasía"); // Búsqueda inicial en español
+    store.searchBooks(currentCategory.value);
   }
 });
 </script>
@@ -42,6 +50,19 @@ onMounted(() => {
             placeholder="Busca por título, autor o ISBN..."
           />
           <button @click="handleSearch" class="btn-primary">Buscar</button>
+        </div>
+
+        <!-- Quick Filters -->
+        <div class="categories animate-fade-in-delayed">
+          <button 
+            v-for="cat in ['Fantasía', 'Ciencia Ficción', 'Misterio', 'Historia', 'Arte']" 
+            :key="cat"
+            @click="changeCategory(cat)"
+            class="cat-chip"
+            :class="{ active: currentCategory === cat }"
+          >
+            {{ cat }}
+          </button>
         </div>
       </div>
     </header>
@@ -120,7 +141,41 @@ h1 {
 .gradient-text {
   background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.categories {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.cat-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1.25rem;
+  border-radius: 2rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cat-chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary);
+  color: white;
+}
+
+.cat-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  box-shadow: 0 0 15px rgba(129, 140, 248, 0.3);
 }
 
 .search-container {

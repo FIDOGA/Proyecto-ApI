@@ -68,7 +68,19 @@ export const useLibraryStore = defineStore("library", {
 
     addToCollection(book) {
       if (!this.myCollection.find((b) => b.id === book.id)) {
-        this.myCollection.push(book);
+        this.myCollection.push({
+          ...book,
+          status: "Quiero leer", // Default status: "Quiero leer", "Leyendo", "Leído"
+          notes: ""
+        });
+        this.saveCollection();
+      }
+    },
+
+    updateBookMetadata(bookId, updates) {
+      const index = this.myCollection.findIndex((b) => b.id === bookId);
+      if (index !== -1) {
+        this.myCollection[index] = { ...this.myCollection[index], ...updates };
         this.saveCollection();
       }
     },

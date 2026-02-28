@@ -1,13 +1,18 @@
 <script setup>
 import { Bookmark, BookmarkCheck, MoreHorizontal } from "lucide-vue-next";
 import { useLibraryStore } from "../stores/library";
+import { useAuthStore } from "../stores/auth";
 import { computed } from "vue";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   book: Object,
 });
 
 const store = useLibraryStore();
+const authStore = useAuthStore();
+const router = useRouter();
+
 const isSaved = computed(() =>
   store.myCollection.some((b) => b.id === props.book.id),
 );
@@ -20,6 +25,12 @@ const coverUrl = computed(() =>
 
 const toggleStatus = (e) => {
   e.stopPropagation();
+  
+  if (!authStore.isAuthenticated) {
+    router.push('/login');
+    return;
+  }
+
   if (isSaved.value) {
     store.removeFromCollection(props.book.id);
   } else {
@@ -128,6 +139,7 @@ const toggleStatus = (e) => {
   margin-bottom: 0.25rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   color: var(--text-main);

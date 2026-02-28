@@ -1,23 +1,34 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import { useAuthStore } from "./auth/index";
 
 export const useLibraryStore = defineStore("library", {
   state: () => ({
     searchResults: [],
-    myCollection: JSON.parse(localStorage.getItem("myLibrary") || "[]"),
+    myCollection: [],
     loading: false,
     error: null,
     currentBook: null,
   }),
 
   actions: {
+    loadUserCollection() {
+      const authStore = useAuthStore();
+      if (authStore.isAuthenticated && authStore.user) {
+        const key = `myLibrary_${authStore.user.name}`;
+        this.myCollection = JSON.parse(localStorage.getItem(key) || "[]");
+      } else {
+        this.myCollection = [];
+      }
+    },
+
     async searchBooks(query) {
       if (!query) return;
       this.loading = true;
       this.error = null;
       try {
         const response = await axios.get(
-          `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&language=spa&limit=20`,
+          `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}+language:spa&limit=20`,
         );
         this.searchResults = response.data.docs.map((doc) => ({
           id: doc.key.replace("/works/", ""),
@@ -68,7 +79,12 @@ export const useLibraryStore = defineStore("library", {
     },
 
     saveCollection() {
-      localStorage.setItem("myLibrary", JSON.stringify(this.myCollection));
+      const authStore = useAuthStore();
+      if (authStore.isAuthenticated && authStore.user) {
+        const key = `myLibrary_${authStore.user.name}`;
+        localStorage.setItem(key, JSON.stringify(this.myCollection));
+      }
     },
   },
 });
+

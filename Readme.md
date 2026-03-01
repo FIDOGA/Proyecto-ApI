@@ -79,7 +79,7 @@ src/
    ```
 
 4. **Explorar**:
-   Accede a `http://localhost:5173`. ¡Usa usuario libre y contraseña `1234`!
+   Coloca en la terminal  `---npx vite --port 5173 `. para acceder a la aplicacion¡Usa usuario libre y contraseña `1234`!
 
 ---
 
@@ -113,9 +113,9 @@ Para que la interfaz no se sienta estática, implementamos retardos en las anima
 
 ## � Autor
 **Ronald Garavito Zapata** 
-**samuel doria**
-**daniel figueroa**
-**elkin martinez**
+**Samuel Doria**
+**Daniel Figueroa**
+**Elkin Martinez**
 
 
 
